@@ -4,6 +4,10 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+export const metadata = {
+  title: 'Settings', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default async function SettingsPage() {
   const userId = (await cookies()).get('userId')?.value;
   if (!userId) redirect('/login');
