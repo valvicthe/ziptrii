@@ -4,7 +4,7 @@ Ziptrii is a custom server implementation and web portal recreating the 2020 era
 
 ## Repository Architecture
 
-- `/backend`: Node.js + Express application driving all core APIs (`auth`, `users`, `games`) via sub-domain routing middleware.
-- `/frontend`: Responsive dark-mode layouts matching the exact 2020 design tokens.
+- `/backend`: Node.js + Express application maintaining all core APIs via sub-domain routing middleware.
+- `/frontend`: A Responsive Remake of the 2020 ROBLOX Website.
 - `/launcher`: Registry entry configurations and client activation handlers.
 
