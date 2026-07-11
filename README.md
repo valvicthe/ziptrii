@@ -1,4 +1,4 @@
-# Ziptrii (2020)
+# Ziptrii
 
 Ziptrii is a custom server implementation and web portal recreating the 2020 era. This repository uses a monorepo architecture designed for seamless deployment.
 
