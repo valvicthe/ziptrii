@@ -2,6 +2,10 @@ export const dynamic = 'force-dynamic';
 import { query } from '@/lib/db';
 import { cookies } from 'next/headers';
 
+export const metadata = {
+  title: 'Inventory', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default async function InventoryPage() {
   const userId = (await cookies()).get('userId')?.value;
   if (!userId) return <p>Please log in.</p>;
