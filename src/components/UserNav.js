@@ -19,7 +19,7 @@ export default function UserNav() {
       {user ? (
         <>
           <span className="robux-balance">13,370 <span className="robux-icon">R$</span></span>
-          <a href={`/profile/${user.id}`} className="user-pill">{user.username}</a>
+          <a href={`/users/${user.id}`} className="user-pill">{user.username}</a>
           <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button>
         </>
       ) : (
