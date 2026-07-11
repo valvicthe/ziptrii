@@ -1,6 +1,10 @@
 'use client';
 import { useState } from 'react';
 
+export const metadata = {
+  title: 'Login', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
