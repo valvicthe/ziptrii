@@ -29,7 +29,7 @@ export async function POST(request) {
 
     // 2. Comparison
     console.log("DEBUG: Attempting comparison for:", user.username);
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    const isPasswordValid = (password === user.password_hash);
     
     console.log("DEBUG: Bcrypt result:", isPasswordValid);
 
