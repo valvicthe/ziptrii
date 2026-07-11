@@ -1,6 +1,0 @@
-[Setup]
-Version=2020.1
-ProjectName=Ziptrii
-Protocol=ziptrii
-ExecutableTarget=ZiptriiPlayerBeta.exe
-CustomTrustCheckEnabled=false
