@@ -1,3 +1,5 @@
+'use client'; // <--- THIS IS THE FIX
+
 export default function BannedPage() {
   return (
     <main style={{ 
@@ -30,7 +32,7 @@ export default function BannedPage() {
           Your account has been deleted for violating our terms of service. Please contact support in our Discord if you believe this is a mistake.
         </p>
         <button 
-          onClick={() => { localStorage.removeItem('user'); window.location.href = '/login'; }} 
+          onClick={() => { localStorage.removeItem('user'); window.location.href = '/login'; }}
           style={{ 
             backgroundColor: '#0074BD', 
             color: '#FFFFFF', 
