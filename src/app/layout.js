@@ -1,8 +1,9 @@
 import './globals.css';
+import UserNav from '@/components/UserNav';
 
 export const metadata = {
-  title: 'Ziptrii',
-  description: 'Step back into the modern classic era of 2020.',
+  title: 'Ziptrii (Beta)',
+  description: 'Roblox if they actually listened',
 };
 
 export default function RootLayout({ children }) {
@@ -19,10 +20,9 @@ export default function RootLayout({ children }) {
               <a href="/robux">Robux</a>
             </nav>
           </div>
-          <div className="nav-right">
-            <span className="robux-balance">13,370 <span className="robux-icon">R$</span></span>
-            <a href="/users/1" className="user-pill" style={{ color: '#fff', textDecoration: 'none' }}>ZiptriiAdmin</a>
-          </div>
+          
+          {/* This component handles the Login/User state dynamically */}
+          <UserNav />
         </header>
 
         <div className="main-layout">
