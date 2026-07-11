@@ -29,7 +29,7 @@ export default function BannedPage() {
           Account Deleted
         </h2>
         <p style={{ color: '#5A5A5A', fontSize: '15px', marginBottom: '20px' }}>
-          Your account has been deleted for violating our terms of service. Please contact support in our Discord if you believe this is a mistake.
+          Your account has been deleted because you is retarded
         </p>
         <button 
           onClick={() => { localStorage.removeItem('user'); window.location.href = '/login'; }}
