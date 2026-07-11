@@ -1,6 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 
+export const metadata = {
+  title: 'Home', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default function RobloxRetroPage() {
   const [user, setUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
