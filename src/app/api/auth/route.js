@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { Pool } from 'pg';
 
 const pool = new Pool({
@@ -18,28 +19,47 @@ export async function POST(request) {
         return NextResponse.json({ error: "Username already taken" }, { status: 400 });
       }
       
-      const insertQuery = 'INSERT INTO users (username, password_hash, is_banned) VALUES ($1, $2, FALSE) RETURNING id';
-      await pool.query(insertQuery, [username.trim(), password]);
+      // Defaulting role to 'user' and robux to 0
+      const insertQuery = 'INSERT INTO users (username, password_hash, is_banned, role, robux) VALUES ($1, $2, FALSE, $3, $4) RETURNING id';
+      await pool.query(insertQuery, [username.trim(), password, 'user', 0]);
+      
       return NextResponse.json({ success: true, message: "Account created successfully" });
     }
 
     // --- LOGIN LOGIC ---
-    const queryText = 'SELECT id, username, password_hash, is_banned FROM users WHERE username = $1 LIMIT 1';
+    // Added 'role' and 'robux' to the query so the frontend receives them
+    const queryText = 'SELECT id, username, password_hash, is_banned, role, robux FROM users WHERE username = $1 LIMIT 1';
     const dbResult = await pool.query(queryText, [username.trim()]);
     const user = dbResult.rows[0];
 
-    // Check credentials (Plaintext as requested)
+    // Check credentials
     if (!user || password !== user.password_hash) {
       return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
     }
 
-    // Return user info including ban status
+    if (user.is_banned) {
+      return NextResponse.json({ error: "Account banned." }, { status: 403 });
+    }
+
+    // Set the secure cookie for Server-Side Auth (used by Admin/Sidebar checks)
+    const cookieStore = await cookies();
+    cookieStore.set('userId', user.id.toString(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7 // 1 week
+    });
+
+    // Return user info for Client-Side (LocalStorage)
     return NextResponse.json({ 
       success: true, 
       user: { 
         id: user.id, 
         username: user.username, 
-        isBanned: user.is_banned 
+        isBanned: user.is_banned,
+        role: user.role,
+        robux: user.robux
       } 
     });
 
