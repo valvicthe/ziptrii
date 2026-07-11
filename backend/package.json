@@ -1,0 +1,14 @@
+{
+  "name": "ziptrii-backend",
+  "version": "1.0.0",
+  "description": "API Gateway and sub-domain controller layer for Ziptrii",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.11.5"
+  }
+}
