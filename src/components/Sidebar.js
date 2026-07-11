@@ -17,6 +17,9 @@ export default function Sidebar() {
         <a href="/messages" style={linkStyle}>Messages</a>
         <a href="/friends" style={linkStyle}>Friends</a>
         <a href="/inventory" style={linkStyle}>Inventory</a>
+        <a href="/settings" className="sidebar-item">Account Settings</a>
+        <a href="/groups" className="sidebar-item">Groups</a>
+        <a href="https://discord.gg/MkzpNEdWU" className="sidebar-item">Discord Server</a>
         {user?.role === 'admin' && (
           <a href="/admin" style={{ ...linkStyle, borderLeft: '4px solid #d9534f', color: '#d9534f' }}>Admin Panel</a>
         )}
