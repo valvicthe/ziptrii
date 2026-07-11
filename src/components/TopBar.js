@@ -21,7 +21,7 @@ export default function TopBar() {
       {user ? (
         <>
           <span>Welcome, <strong>{user.username}</strong></span>
-          <a href={`/profile/${user.id}`}>My Profile</a>
+          <a href={`/users/${user.id}`}>My Profile</a>
           <button onClick={handleLogout}>Log Out</button>
         </>
       ) : (
