@@ -5,6 +5,10 @@ export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+export const metadata = {
+  title: 'Sign-Up', // This will result in "Avatar Shop | Ziptrii"
+};
+
   const handleSignup = async (e) => {
     e.preventDefault();
     const res = await fetch('/api/auth', {
