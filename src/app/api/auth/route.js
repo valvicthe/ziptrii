@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
-import bcrypt from 'bcryptjs';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -10,40 +9,42 @@ const pool = new Pool({
 
 export async function POST(request) {
   try {
-    const { username, password } = await request.json();
+    const { username, password, type } = await request.json();
 
-    if (!username || !password) {
-      return NextResponse.json({ error: "Missing username or password" }, { status: 400 });
+    // --- SIGN UP LOGIC ---
+    if (type === 'signup') {
+      const checkExists = await pool.query('SELECT id FROM users WHERE username = $1', [username.trim()]);
+      if (checkExists.rows.length > 0) {
+        return NextResponse.json({ error: "Username already taken" }, { status: 400 });
+      }
+      
+      const insertQuery = 'INSERT INTO users (username, password_hash, is_banned) VALUES ($1, $2, FALSE) RETURNING id';
+      await pool.query(insertQuery, [username.trim(), password]);
+      return NextResponse.json({ success: true, message: "Account created successfully" });
     }
 
-    // 1. Fetch user by username
-    const queryText = 'SELECT id, username, password_hash FROM users WHERE username = $1 LIMIT 1';
+    // --- LOGIN LOGIC ---
+    const queryText = 'SELECT id, username, password_hash, is_banned FROM users WHERE username = $1 LIMIT 1';
     const dbResult = await pool.query(queryText, [username.trim()]);
-    
     const user = dbResult.rows[0];
 
-    if (!user) {
-      console.log("DEBUG: User not found:", username);
-      return NextResponse.json({ error: "Incorrect username or password" }, { status: 401 });
+    // Check credentials (Plaintext as requested)
+    if (!user || password !== user.password_hash) {
+      return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
     }
 
-    // 2. Comparison
-    console.log("DEBUG: Attempting comparison for:", user.username);
-    const isPasswordValid = (password === user.password_hash);
-    
-    console.log("DEBUG: Bcrypt result:", isPasswordValid);
-
-    if (!isPasswordValid) {
-      return NextResponse.json({ error: "Incorrect username or password" }, { status: 401 });
-    }
-
+    // Return user info including ban status
     return NextResponse.json({ 
       success: true, 
-      user: { id: user.id, username: user.username } 
+      user: { 
+        id: user.id, 
+        username: user.username, 
+        isBanned: user.is_banned 
+      } 
     });
 
   } catch (error) {
-    console.error("DEBUG: CRITICAL AUTH ERROR:", error);
-    return NextResponse.json({ error: "Internal Server Error", message: error.message }, { status: 500 });
+    console.error("AUTH ERROR:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
