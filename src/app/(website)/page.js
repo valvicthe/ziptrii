@@ -39,8 +39,7 @@ export default function RobloxRetroPage() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #0074BD', borderRadius: '3px', padding: '4px 10px', backgroundColor: '#E5F3FF', fontWeight: '700', fontSize: '12px', color: '#0074BD', userSelect: 'none' }}>
-            <span style={{ marginRight: '6px' }}>🛡️ PREMIUM</span>
-            <span style={{ backgroundColor: '#0074BD', color: '#FFF', padding: '1px 5px', borderRadius: '2px', fontSize: '10px' }}>FREE</span>
+            <span style={{ marginRight: '6px' }}>Ziptrii (Beta)</span>
           </div>
 
           <div style={{ position: 'relative' }}>
