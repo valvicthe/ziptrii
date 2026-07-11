@@ -24,11 +24,11 @@ export default function RootLayout({ children }) {
           <UserNav />
         </header>
 
-        <div className="main-layout">
+        <div className="main-layout" style={{ display: 'flex' }}>
           {/* Dynamic Sidebar handles authentication and link generation */}
           <Sidebar />
           
-          <main className="content">
+          <main className="content" style={{ flex: 1 }}>
             {children}
           </main>
         </div>
