@@ -3,7 +3,10 @@ import UserNav from '@/components/UserNav';
 import Sidebar from '@/components/Sidebar';
 
 export const metadata = {
-  title: 'Ziptrii (Beta)',
+  title: {
+    default: 'Ziptrii',
+    template: '%s | Ziptrii', // This adds " | Ziptrii" to every page title
+  },
   description: 'Roblox, Reimagined',
 };
 
