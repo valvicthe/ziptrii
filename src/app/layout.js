@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
           <div className="nav-left">
             <div className="logo">ZIPTRII</div>
             <nav className="nav-links">
-              <a href="/" className="active">Discover</a>
+              <a href="/" className="active">Home</a>
               <a href="/shop">Avatar Shop</a>
               <a href="/create">Create</a>
               <a href="/robux">Robux</a>
