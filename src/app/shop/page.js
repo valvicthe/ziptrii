@@ -3,6 +3,10 @@ import { query } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
+export const metadata = {
+  title: 'Avatar Shop', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default async function ShopPage() {
   const items = (await query('SELECT * FROM items')).rows;
 
