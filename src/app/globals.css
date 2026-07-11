@@ -76,3 +76,15 @@ button {
   cursor: pointer;
   font-weight: bold;
 }
+
+.game-placeholder {
+  background-color: #232527; 
+  border: 1px dashed #393B3D; 
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  color: #BDC3C7; 
+  font-size: 16px;
+  max-width: 600px;
+  margin-top: 20px;
+}
