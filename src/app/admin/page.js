@@ -3,46 +3,48 @@ import { cookies } from 'next/headers';
 import { query } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
-// Helper function to verify admin status on the server
+// SECURE: Server-side check that validates the session against the actual Database
 async function getAdminSession() {
   const cookieStore = await cookies();
   const userId = cookieStore.get('userId')?.value;
 
   if (!userId) return null;
 
-  // Verify this user is actually an admin in the DB
-  const res = await query('SELECT role FROM users WHERE id = $1 AND role = $2', [userId, 'admin']);
-  return res.rows[0];
+  // Query DB to ensure the user actually holds the 'admin' role
+  const res = await query('SELECT role FROM users WHERE id = $1 AND role = $2', [parseInt(userId), 'admin']);
+  return res.rows.length > 0 ? res.rows[0] : null;
 }
 
 export default async function AdminDashboard() {
-  // 1. Force Auth Check: If not an admin, redirect immediately to home
+  // 1. Force Auth Check: If not authorized, redirect immediately to home
   const admin = await getAdminSession();
   if (!admin) {
     redirect('/');
   }
 
-  // 2. Fetch Users
+  // 2. Fetch Users (Only executes if admin check passed)
   const res = await query('SELECT id, username, display_name, role, is_banned, ban_reason FROM users ORDER BY id ASC');
   const users = res.rows;
 
-  // 3. Server Action (Securely checks admin status again)
+  // 3. Server Action: Securely handles bans/pardons
   async function toggleUserBan(formData) {
     'use server';
     
-    // Validate session again inside the action to prevent POST injection
+    // Validate session AGAIN inside the action to prevent POST injection
     const session = await getAdminSession();
     if (!session) throw new Error("Unauthorized");
 
     const userId = formData.get('userId');
     const currentStatus = formData.get('isBanned') === 'true';
 
-    // Prevent banning super-admins (System Accounts)
+    // Critical protection: Do not allow banning system/root accounts
     if (userId === '1' || userId === '2') return;
 
     if (currentStatus) {
+      // Pardon
       await query('UPDATE users SET is_banned = false, ban_reason = \'\' WHERE id = $1', [userId]);
     } else {
+      // Ban
       await query('UPDATE users SET is_banned = true, ban_reason = \'Administrative Enforcement Violation\' WHERE id = $1', [userId]);
     }
     revalidatePath('/admin');
