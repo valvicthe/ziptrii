@@ -1,5 +1,9 @@
 'use client';
 
+export const metadata = {
+  title: 'Banned', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default function BannedPage() {
   return (
     <main style={{ 
