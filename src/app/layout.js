@@ -1,9 +1,10 @@
 import './globals.css';
 import UserNav from '@/components/UserNav';
+import Sidebar from '@/components/Sidebar';
 
 export const metadata = {
   title: 'Ziptrii (Beta)',
-  description: 'SIGMA ROBLOX SEX',
+  description: 'Roblox, Reimagined',
 };
 
 export default function RootLayout({ children }) {
@@ -20,21 +21,16 @@ export default function RootLayout({ children }) {
               <a href="/robux">Robux</a>
             </nav>
           </div>
-          {/* Your original nav-right replaced with the dynamic UserNav component */}
           <UserNav />
         </header>
 
         <div className="main-layout">
-          <aside className="left-sidebar">
-            <a href="/" className="sidebar-item active">Home</a>
-            <a href="/users/1" className="sidebar-item">Profile</a>
-            <a href="/messages" className="sidebar-item">Messages</a>
-            <a href="/friends" className="sidebar-item">Friends</a>
-            <a href="/inventory" className="sidebar-item">Inventory</a>
-            <a href="/admin" className="sidebar-item" style={{ borderLeft: '2px solid #d9534f', paddingLeft: '10px' }}>Admin</a>
-          </aside>
+          {/* Dynamic Sidebar handles authentication and link generation */}
+          <Sidebar />
           
-          <main className="content">{children}</main>
+          <main className="content">
+            {children}
+          </main>
         </div>
       </body>
     </html>
