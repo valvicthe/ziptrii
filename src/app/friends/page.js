@@ -3,6 +3,10 @@ import { query } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
+export const metadata = {
+  title: 'Friends', // This will result in "Avatar Shop | Ziptrii"
+};
+
 export default async function FriendsPage() {
   const cookieStore = await cookies();
   const userId = cookieStore.get('userId')?.value;
