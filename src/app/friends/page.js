@@ -8,51 +8,68 @@ export default async function FriendsPage() {
   const userId = cookieStore.get('userId')?.value;
   if (!userId) return <p>Please log in.</p>;
 
-  // Fetch list of friends
+  // 1. Fetch Accepted Friends
   const friends = (await query(`
-    SELECT u.username 
-    FROM friends f
-    JOIN users u ON f.friend_id = u.id
-    WHERE f.user_id = $1
+    SELECT u.username FROM friend_requests f
+    JOIN users u ON (u.id = f.sender_id OR u.id = f.receiver_id)
+    WHERE (f.sender_id = $1 OR f.receiver_id = $1)
+    AND f.status = 'accepted' AND u.id != $1
   `, [userId])).rows;
 
-  async function addFriend(formData) {
+  // 2. Fetch Pending Requests
+  const requests = (await query(`
+    SELECT f.id, u.username FROM friend_requests f
+    JOIN users u ON u.id = f.sender_id
+    WHERE f.receiver_id = $1 AND f.status = 'pending'
+  `, [userId])).rows;
+
+  // --- ACTIONS ---
+  async function sendRequest(formData) {
     'use server';
-    const targetUsername = formData.get('username');
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('userId')?.value;
-
-    try {
-      // Find the user ID of the person we are trying to add
-      const targetUser = (await query('SELECT id FROM users WHERE username = $1', [targetUsername])).rows[0];
-      if (!targetUser) throw new Error("User not found");
-      if (targetUser.id.toString() === userId) throw new Error("Cannot add yourself");
-
-      // Add to friends table
-      await query('INSERT INTO friends (user_id, friend_id) VALUES ($1, $2)', [userId, targetUser.id]);
-      await query('INSERT INTO friends (user_id, friend_id) VALUES ($1, $2)', [targetUser.id, userId]);
-      
+    const targetName = formData.get('username');
+    const senderId = (await cookies()).get('userId').value;
+    const receiver = (await query('SELECT id FROM users WHERE username = $1', [targetName])).rows[0];
+    
+    if (receiver) {
+      await query('INSERT INTO friend_requests (sender_id, receiver_id) VALUES ($1, $2)', [senderId, receiver.id]);
       revalidatePath('/friends');
-    } catch (error) {
-      console.error("FRIEND ERROR:", error.message);
     }
+  }
+
+  async function acceptRequest(formData) {
+    'use server';
+    const requestId = formData.get('requestId');
+    await query("UPDATE friend_requests SET status = 'accepted' WHERE id = $1", [requestId]);
+    revalidatePath('/friends');
   }
 
   return (
     <div style={{ padding: '30px', color: '#fff' }}>
-      <h1>My Friends</h1>
+      <h1>Friends</h1>
       
-      <form action={addFriend} style={{ marginBottom: '20px' }}>
-        <input name="username" placeholder="Enter username..." style={{ padding: '8px', background: '#333', color: '#fff', border: '1px solid #555' }} />
-        <button type="submit" style={{ marginLeft: '10px' }}>Add Friend</button>
+      {/* Send Request */}
+      <form action={sendRequest} style={{ marginBottom: '20px' }}>
+        <input name="username" placeholder="Enter username..." style={{ padding: '8px', background: '#333', color: '#fff', border: 'none' }} />
+        <button type="submit" style={{ marginLeft: '10px' }}>Send Request</button>
       </form>
 
-      <ul style={{ listStyle: 'none' }}>
-        {friends.map((f, i) => (
-          <li key={i} style={{ padding: '10px', background: '#222', marginBottom: '5px', borderRadius: '4px' }}>
-            {f.username}
-          </li>
+      {/* Incoming Requests */}
+      {requests.length > 0 && <div>
+        <h3>Incoming Requests</h3>
+        {requests.map(req => (
+          <form key={req.id} action={acceptRequest}>
+            <p>{req.username} wants to be friends 
+              <input type="hidden" name="requestId" value={req.id} />
+              <button type="submit" style={{ marginLeft: '10px' }}>Accept</button>
+            </p>
+          </form>
         ))}
+      </div>}
+
+      {/* Friend List */}
+      <h3>My Friends</h3>
+      <ul>
+        {friends.map((f, i) => <li key={i}>{f.username}</li>)}
       </ul>
     </div>
   );
