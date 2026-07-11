@@ -1,0 +1,124 @@
+:root {
+    /* Backgrounds */
+    --bg-main: #191B1D;         /* Dark background behind everything */
+    --bg-container: #232527;    /* Lighter gray for cards, topbar, and inputs */
+    --bg-card-hover: #2C2E30;   /* Slightly lighter gray when hovering over items */
+
+    /* Borders & Dividers */
+    --border-color: #393B3D;    /* Thin lines separating categories */
+
+    /* Typography colors */
+    --text-primary: #FFFFFF;    /* Pure white for headers/titles */
+    --text-secondary: #BDC3C7;  /* Muted silver for subtitles and timestamps */
+    --text-link: #00A2FF;       /* Roblox blue for links and active tabs */
+    
+    /* Branding */
+    --brand-success: #00B06F;   /* The green color used for "Play" buttons */
+}
+
+/* Global Reset for that flat look */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: "Hemi Head", "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Top Navbar styling */
+.top-nav {
+    background-color: var(--bg-container);
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 15px;
+}
+
+.nav-links a.active {
+    border-bottom: 2px solid var(--text-primary);
+    padding-bottom: 9px;
+}
+
+/* Master Grid Layout */
+.main-layout {
+    display: flex;
+    margin-top: 10px;
+}
+
+.left-sidebar {
+    width: 180px;
+    padding: 20px;
+}
+
+.sidebar-item {
+    display: block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.sidebar-item.active {
+    background-color: var(--bg-container);
+    color: var(--text-primary);
+}
+
+.content {
+    flex-1;
+    padding: 20px;
+    max-width: 1200px;
+}
+
+/* 2020 Game Cards */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.game-card {
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.game-card:hover .game-title {
+    color: var(--text-link);
+}
+
+.game-icon-placeholder {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background-color: var(--bg-container);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.game-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.game-stats {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+}
