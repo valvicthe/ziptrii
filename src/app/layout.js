@@ -1,0 +1,46 @@
+import './globals.css';
+
+export const metadata = {
+  title: 'Home - Ziptrii',
+  description: 'Welcome to Ziptrii!',
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {/* 2020 Header */}
+        <header className="top-nav">
+          <div className="nav-left">
+            <div className="logo">ZIPTRII</div>
+            <nav className="nav-links">
+              <a href="#" className="active">Discover</a>
+              <a href="#">Avatar Shop</a>
+              <a href="#">Create</a>
+              <a href="#">Robux</a>
+            </nav>
+          </div>
+          <div className="nav-right">
+            <span className="robux-balance">13,370 <span className="robux-icon">R$</span></span>
+            <div className="user-pill">ZiptriiAdmin</div>
+          </div>
+        </header>
+
+        <div className="main-layout">
+          {/* 2020 Left Sidebar */}
+          <aside className="left-sidebar">
+            <a href="#" className="sidebar-item active">Home</a>
+            <a href="#" className="sidebar-item">Profile</a>
+            <a href="#" className="sidebar-item">Messages</a>
+            <a href="#" className="sidebar-item">Friends</a>
+            <a href="#" className="sidebar-item">Inventory</a>
+            <a href="#" className="sidebar-item">Trade</a>
+            <a href="#" className="sidebar-item">Premium</a>
+          </aside>
+          
+          <main className="content">{children}</main>
+        </div>
+      </body>
+    </html>
+  );
+}
