@@ -1,10 +1,11 @@
-export const dynamic = 'force-dynamic';
 import { query } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
-  title: 'Friends', // This will result in "Avatar Shop | Ziptrii"
+  title: 'Friends', 
 };
 
 export default async function FriendsPage() {
