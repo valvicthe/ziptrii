@@ -1,7 +1,7 @@
 import './globals.css';
 import UserNav from '@/components/UserNav';
 import Sidebar from '@/components/Sidebar';
-import SearchBar from '@/components/SearchBar'; // 1. Import it
+import SearchBar from '@/components/SearchBar';
 
 export const metadata = {
   title: {
@@ -9,6 +9,10 @@ export const metadata = {
     template: '%s | Ziptrii',
   },
   description: 'Roblox, Reimagined',
+  // This explicitly links your favicon
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -24,7 +28,6 @@ export default function RootLayout({ children }) {
               <a href="/create">Create</a>
               <a href="/robux">Robux</a>
             </nav>
-            {/* 2. Add SearchBar here */}
             <SearchBar /> 
           </div>
           <UserNav />
