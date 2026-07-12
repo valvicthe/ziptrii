@@ -5,21 +5,14 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default async function HomePage() {
-  // 1. Force Redirect immediately if not logged in
   const cookieStore = await cookies();
   const userId = cookieStore.get('userId')?.value;
 
-  if (!userId) {
-    redirect('/login');
-  }
+  if (!userId) redirect('/login');
 
-  // 2. Fetch logged-in user's details
   const user = (await query('SELECT username FROM users WHERE id = $1', [userId])).rows[0];
-  
-  // If user exists in cookie but was deleted from DB, send them back to login
   if (!user) redirect('/login');
 
-  // 3. Fetch the user's friends
   const friends = (await query(`
     SELECT u.id, u.username 
     FROM friend_requests f
@@ -30,56 +23,55 @@ export default async function HomePage() {
 
   return (
     <div className="home-container">
-      {/* Sub-Header Toolbar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid #313338' }}>
-        <h1 className="page-title" style={{ margin: 0 }}>
+      {/* Header */}
+      <div style={{ marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid #313338' }}>
+        <h1 className="page-title" style={{ margin: 0, color: '#FFFFFF' }}>
           Hello, {user.username}!
         </h1>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ border: '1px solid #0074BD', borderRadius: '3px', padding: '4px 10px', backgroundColor: '#E5F3FF', fontWeight: '700', fontSize: '12px', color: '#0074BD' }}>
-            Ziptrii (Beta)
-          </div>
-          
-          <Link href="/settings" style={{ fontSize: '22px', color: '#B5BAC1', textDecoration: 'none' }}>
-            ⚙️
-          </Link>
-        </div>
       </div>
 
       {/* --- Friends Section --- */}
-      <section className="home-section">
-        <div className="section-header">
-          <h2>Friends ({friends.length})</h2>
-          <Link href="/friends" className="see-all">See All →</Link>
+      <section className="home-section" style={{ marginBottom: '30px' }}>
+        <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+          <h2 style={{ fontSize: '18px', color: '#FFFFFF' }}>Friends ({friends.length})</h2>
+          <Link href="/friends" style={{ color: '#00A2FF', textDecoration: 'none' }}>See All</Link>
         </div>
         
-        <div className="friends-row">
+        <div className="friends-row" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
           <Link href="/friends" style={{ textDecoration: 'none' }}>
-            <div className="friend-card add-friend-card">
-              <div className="add-friend-btn">+</div>
-              <span className="friend-name">Add Friends</span>
+            <div className="friend-card" style={{ padding: '15px', background: '#1E1F22', border: '1px solid #313338', borderRadius: '4px', textAlign: 'center', width: '100px' }}>
+              <div style={{ fontSize: '20px', marginBottom: '5px' }}>+</div>
+              <span style={{ fontSize: '12px', color: '#B5BAC1' }}>Add</span>
             </div>
           </Link>
 
           {friends.map((friend) => (
-            <div key={friend.id} className="friend-card">
-              <div className="friend-avatar">
-                <div className="status-badge">👤</div>
+            <Link key={friend.id} href={`/users/${friend.id}`} style={{ textDecoration: 'none' }}>
+              <div className="friend-card" style={{ padding: '15px', background: '#1E1F22', border: '1px solid #313338', borderRadius: '4px', textAlign: 'center', width: '100px' }}>
+                <div className="friend-avatar" style={{ fontSize: '24px', marginBottom: '5px' }}>👤</div>
+                <span style={{ fontSize: '12px', color: '#F2F3F5', fontWeight: 'bold' }}>{friend.username}</span>
               </div>
-              <span className="friend-name">{friend.username}</span>
-            </div>
+            </Link>
           ))}
+        </div>
+      </section>
+
+      {/* --- Groups Section (New) --- */}
+      <section className="home-section" style={{ marginBottom: '30px' }}>
+        <div className="section-header">
+          <h2 style={{ fontSize: '18px', color: '#FFFFFF' }}>My Groups</h2>
+        </div>
+        <div style={{ padding: '20px', textAlign: 'center', border: '1px dashed #313338', borderRadius: '4px', color: '#B5BAC1' }}>
+          <p>You aren't in any groups yet.</p>
         </div>
       </section>
 
       {/* --- Recently Played Section --- */}
       <section className="home-section">
         <div className="section-header">
-          <h2>Recently Played</h2>
+          <h2 style={{ fontSize: '18px', color: '#FFFFFF' }}>Recently Played</h2>
         </div>
-        
-        <div className="game-placeholder" style={{ maxWidth: '100%', padding: '40px', textAlign: 'center', border: '1px dashed #313338', borderRadius: '8px', color: '#B5BAC1' }}>
+        <div style={{ padding: '40px', textAlign: 'center', border: '1px dashed #313338', borderRadius: '4px', color: '#B5BAC1' }}>
           <p>No Recently Played Games!</p>
         </div>
       </section>
