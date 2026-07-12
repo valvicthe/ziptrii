@@ -1,78 +1,89 @@
-'use client';
-import { useEffect, useState } from 'react';
+export const dynamic = 'force-dynamic';
+import { query } from '@/lib/db';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
-export const metadata = {
-  title: 'Home', // This will result in "Avatar Shop | Ziptrii"
-};
+export default async function HomePage() {
+  // 1. Authenticate using cookies
+  const cookieStore = await cookies();
+  const userId = cookieStore.get('userId')?.value;
 
-export default function RobloxRetroPage() {
-  const [user, setUser] = useState(null);
-  const [showSettings, setShowSettings] = useState(false);
+  if (!userId) {
+    redirect('/login');
+  }
 
-  useEffect(() => {
-    // 1. Check for authentication
-    const savedUser = localStorage.getItem('user');
-    
-    if (!savedUser) {
-      window.location.href = '/login';
-      return;
-    }
+  // 2. Fetch the logged-in user's details
+  const user = (await query('SELECT username FROM users WHERE id = $1', [userId])).rows[0];
+  if (!user) redirect('/login');
 
-    const userData = JSON.parse(savedUser);
-
-    // 2. Check for ban status
-    if (userData.isBanned) {
-      window.location.href = '/banned';
-      return;
-    }
-
-    setUser(userData);
-  }, []);
-
-  // Only render dashboard if we have a user
-  if (!user) return null; 
+  // 3. Fetch the user's friends
+  const friends = (await query(`
+    SELECT u.id, u.username 
+    FROM friend_requests f
+    JOIN users u ON (u.id = f.sender_id OR u.id = f.receiver_id)
+    WHERE (f.sender_id = $1 OR f.receiver_id = $1)
+    AND f.status = 'accepted' AND u.id != $1
+  `, [userId])).rows;
 
   return (
-    <div style={{ fontFamily: '"HCo Gotham SSm", Arial, sans-serif', padding: '24px', width: '100%', boxSizing: 'border-box' }}>
-      
-      {/* Sub-Header Toolbar Control Section */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid #393B3D' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: '600', margin: 0, letterSpacing: '-0.5px', color: '#FFFFFF' }}>
+    <div className="home-container">
+      {/* Sub-Header Toolbar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid #313338' }}>
+        <h1 className="page-title" style={{ margin: 0 }}>
           Hello, {user.username}!
         </h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Badge */}
-          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #0074BD', borderRadius: '3px', padding: '4px 10px', backgroundColor: '#E5F3FF', fontWeight: '700', fontSize: '12px', color: '#0074BD' }}>
+          <div style={{ border: '1px solid #0074BD', borderRadius: '3px', padding: '4px 10px', backgroundColor: '#E5F3FF', fontWeight: '700', fontSize: '12px', color: '#0074BD' }}>
             Ziptrii (Beta)
           </div>
-
-          <div style={{ position: 'relative' }}>
-            <button 
-              onClick={() => setShowSettings(!showSettings)} 
-              style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#BDC3C7', padding: '4px' }}
-            >
-              ⚙️
-            </button>
-            {showSettings && (
-              <div style={{ position: 'absolute', right: 0, top: '35px', backgroundColor: '#232527', border: '1px solid #393B3D', borderRadius: '3px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)', width: '130px', zIndex: 9999 }}>
-                <div style={{ padding: '10px 14px', fontSize: '13px', borderBottom: '1px solid #393B3D', cursor: 'pointer', color: '#FFFFFF' }} onClick={() => alert('Account Settings')}>Settings</div>
-                <div style={{ padding: '10px 14px', fontSize: '13px', color: '#D9534F', cursor: 'pointer' }} onClick={() => { localStorage.removeItem('user'); window.location.href = '/login'; }}>Logout</div>
-              </div>
-            )}
-          </div>
+          
+          <Link href="/settings" style={{ fontSize: '22px', color: '#B5BAC1', textDecoration: 'none' }}>
+            ⚙️
+          </Link>
         </div>
       </div>
 
-      {/* Main Experiences Module */}
-      <div>
-        <h2 style={{ fontSize: '20px', fontWeight: '600', margin: '0 0 14px 0', color: '#FFFFFF' }}>Recently Played</h2>
+      {/* --- Friends Section --- */}
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Friends ({friends.length})</h2>
+          <Link href="/friends" className="see-all">See All →</Link>
+        </div>
+        
+        <div className="friends-row">
+          {/* Add Friend Button */}
+          <Link href="/friends" style={{ textDecoration: 'none' }}>
+            <div className="friend-card add-friend-card">
+              <div className="add-friend-btn">+</div>
+              <span className="friend-name">Add Friends</span>
+            </div>
+          </Link>
+
+          {/* Dynamic Friend Avatars */}
+          {friends.map((friend) => (
+            <div key={friend.id} className="friend-card">
+              <div className="friend-avatar">
+                <div className="status-badge">👤</div>
+              </div>
+              <span className="friend-name">{friend.username}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- Recently Played Section --- */}
+      <section className="home-section">
+        <div className="section-header">
+          <h2>Recently Played</h2>
+        </div>
         
         {/* Placeholder Box */}
-        <div className="game-placeholder">
-          <p>You haven't played any games yet!</p>
+        <div className="game-placeholder" style={{ maxWidth: '100%' }}>
+          <p>No Recently Played Games!</p>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
