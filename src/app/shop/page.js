@@ -1,10 +1,11 @@
-export const dynamic = 'force-dynamic';
 import { query } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
-  title: 'Avatar Shop', // This will result in "Avatar Shop | Ziptrii"
+  title: 'Avatar Shop',
 };
 
 export default async function ShopPage() {
@@ -13,7 +14,6 @@ export default async function ShopPage() {
   async function purchaseItem(formData) {
     'use server';
     
-    // 1. Get userId securely from cookies, NOT the form
     const cookieStore = await cookies();
     const userId = cookieStore.get('userId')?.value;
     
@@ -25,6 +25,12 @@ export default async function ShopPage() {
     try {
       await query('BEGIN');
       
+      // 1. Check if user already owns the item
+      const ownershipCheck = await query('SELECT 1 FROM inventory WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
+      if (ownershipCheck.rows.length > 0) {
+        throw new Error("You already own this item.");
+      }
+
       // 2. Check user balance and lock the row
       const userRes = await query('SELECT robux FROM users WHERE id = $1 FOR UPDATE', [userId]);
       const user = userRes.rows[0];
@@ -42,23 +48,24 @@ export default async function ShopPage() {
     } catch (error) {
       await query('ROLLBACK');
       console.error("PURCHASE ERROR:", error.message);
-      // Re-throw or handle error
       throw new Error(error.message);
     }
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px', color: '#fff' }}>
       <h1>Avatar Shop</h1>
       <div style={{ display: 'grid', gap: '20px', marginTop: '20px' }}>
         {items.map(item => (
-          <div key={item.id} style={{ border: '1px solid #333', padding: '15px', borderRadius: '8px' }}>
+          <div key={item.id} style={{ border: '1px solid #333', padding: '15px', borderRadius: '8px', background: '#222' }}>
             <h3>{item.name}</h3>
             <p>{item.price} R$</p>
             <form action={purchaseItem}>
               <input type="hidden" name="itemId" value={item.id} />
               <input type="hidden" name="price" value={item.price} />
-              <button type="submit">Buy Now</button>
+              <button type="submit" style={{ cursor: 'pointer', padding: '8px 16px', background: '#00A2FF', border: 'none', color: 'white', borderRadius: '4px' }}>
+                Buy Now
+              </button>
             </form>
           </div>
         ))}
