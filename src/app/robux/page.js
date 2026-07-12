@@ -38,7 +38,7 @@ export default async function RobuxPage() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '40px auto', padding: '20px', color: '#F2F3F5', fontFamily: '"HCo Gotham SSm", Arial, sans-serif' }}>
-      <h1>Premium & Robux</h1>
+      <h1>Robux</h1>
       <p style={{ color: '#B5BAC1' }}>You are currently a Ziptrii Premium Member. Claim your stipend below. This will become automatic soon.</p>
       
       {/* Balance Card */}
