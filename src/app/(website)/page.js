@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default async function HomePage() {
-  // 1. Authenticate using cookies
+  // 1. Force Redirect immediately if not logged in
   const cookieStore = await cookies();
   const userId = cookieStore.get('userId')?.value;
 
@@ -13,8 +13,10 @@ export default async function HomePage() {
     redirect('/login');
   }
 
-  // 2. Fetch the logged-in user's details
+  // 2. Fetch logged-in user's details
   const user = (await query('SELECT username FROM users WHERE id = $1', [userId])).rows[0];
+  
+  // If user exists in cookie but was deleted from DB, send them back to login
   if (!user) redirect('/login');
 
   // 3. Fetch the user's friends
@@ -53,7 +55,6 @@ export default async function HomePage() {
         </div>
         
         <div className="friends-row">
-          {/* Add Friend Button */}
           <Link href="/friends" style={{ textDecoration: 'none' }}>
             <div className="friend-card add-friend-card">
               <div className="add-friend-btn">+</div>
@@ -61,7 +62,6 @@ export default async function HomePage() {
             </div>
           </Link>
 
-          {/* Dynamic Friend Avatars */}
           {friends.map((friend) => (
             <div key={friend.id} className="friend-card">
               <div className="friend-avatar">
@@ -79,8 +79,7 @@ export default async function HomePage() {
           <h2>Recently Played</h2>
         </div>
         
-        {/* Placeholder Box */}
-        <div className="game-placeholder" style={{ maxWidth: '100%' }}>
+        <div className="game-placeholder" style={{ maxWidth: '100%', padding: '40px', textAlign: 'center', border: '1px dashed #313338', borderRadius: '8px', color: '#B5BAC1' }}>
           <p>No Recently Played Games!</p>
         </div>
       </section>
