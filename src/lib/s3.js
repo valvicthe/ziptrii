@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 const s3Client = new S3Client({
   // Railway injects these automatically
   endpoint: process.env.AWS_ENDPOINT, 
-  region: process.env.AWS_REGION || "us-west-1",
+  region: process.env.AWS_DEFAULT_REGION || "us-west-1",
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
