@@ -11,7 +11,7 @@ export const metadata = {
   description: 'Roblox, Reimagined',
   // This explicitly links your favicon
   icons: {
-    icon: '/favicon.ico',
+    icon: 'https://raw.githubusercontent.com/valvicthe/ziptrii/refs/heads/main/src/app/favicon.ico',
   },
 };
 
