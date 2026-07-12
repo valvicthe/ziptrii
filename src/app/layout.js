@@ -1,11 +1,12 @@
 import './globals.css';
 import UserNav from '@/components/UserNav';
 import Sidebar from '@/components/Sidebar';
+import SearchBar from '@/components/SearchBar'; // 1. Import it
 
 export const metadata = {
   title: {
     default: 'Ziptrii',
-    template: '%s | Ziptrii', // This adds " | Ziptrii" to every page title
+    template: '%s | Ziptrii',
   },
   description: 'Roblox, Reimagined',
 };
@@ -23,12 +24,13 @@ export default function RootLayout({ children }) {
               <a href="/create">Create</a>
               <a href="/robux">Robux</a>
             </nav>
+            {/* 2. Add SearchBar here */}
+            <SearchBar /> 
           </div>
           <UserNav />
         </header>
 
         <div className="main-layout" style={{ display: 'flex' }}>
-          {/* Dynamic Sidebar handles authentication and link generation */}
           <Sidebar />
           
           <main className="content" style={{ flex: 1 }}>
