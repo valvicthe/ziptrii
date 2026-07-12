@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 export const metadata = {
-  title: 'Free Robux',
+  title: 'Robux and Transactions',
 };
 
 export default async function RobuxPage() {
@@ -39,7 +39,7 @@ export default async function RobuxPage() {
   return (
     <div style={{ maxWidth: '600px', margin: '40px auto', padding: '20px', color: '#F2F3F5', fontFamily: '"HCo Gotham SSm", Arial, sans-serif' }}>
       <h1>Premium & Robux</h1>
-      <p style={{ color: '#B5BAC1' }}>You are currently on Ziptrii Premium (Free). Claim your daily stipend below.</p>
+      <p style={{ color: '#B5BAC1' }}>You are currently a Ziptrii Premium Member. Claim your stipend below. This will become automatic soon.</p>
       
       {/* Balance Card */}
       <div style={{ background: '#1E1F22', padding: '20px', borderRadius: '8px', border: '1px solid #313338', marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
