@@ -8,8 +8,9 @@ export async function GET(request) {
   const code = searchParams.get('code');
   const userId = (await cookies()).get('userId')?.value;
 
-  if (!code || !userId) return NextResponse.redirect(new URL('/settings', request.url));
-
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ziptrii.up.railway.app';
+  return NextResponse.redirect(new URL('/settings', baseUrl));
+  
   // 1. Exchange code for token
   const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
     method: 'POST',
